@@ -26,11 +26,11 @@ build_and_deploy:
   script:
     - |
       {
+        echo "Auth user $NPM_EMAIL [$NPM_USERNAME]" &&
         npm i -g typescript ts-node nodemon &&
         npm i &&
         npm run build &&
         npm install -g npm-cli-login &&
-        echo "Auth user $K8S_SECRET_NPM_EMAIL [$K8S_SECRET_NPM_USERNAME]" &&
         npm-cli-login -u "$K8S_SECRET_NPM_USERNAME" -p "$K8S_SECRET_NPM_TOKEN" -e "$K8S_SECRET_NPM_EMAIL" &&
         npm run deploy &&
         echo "Successfully published version ${NPM_PACKAGE_VERSION} of ${NPM_PACKAGE_NAME} to NPM"
