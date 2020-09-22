@@ -1,17 +1,8 @@
 image: node:latest
 
 stages:
-  - prebuild
   - build
   - deploy
-
-prebuild_package:
-  stage: prebuild
-  script:
-    - |
-      {
-        npm i
-      }
 
 build_package:
   stage: build
@@ -19,6 +10,7 @@ build_package:
     - |
       {
         npm i -g typescript ts-node nodemon &&
+        npm i &&
         npm run build &&
         echo "Successfully built version ${NPM_PACKAGE_VERSION} of ${NPM_PACKAGE_NAME}"
       }
