@@ -26,6 +26,7 @@ build_and_deploy:
   script:
     - |
       {
+        NPM_TOKEN = "$NPM_TOKEN" &&
         npm i -g typescript ts-node nodemon &&
         npm i &&
         npm run build &&
