@@ -26,12 +26,9 @@ build_and_deploy:
   script:
     - |
       {
-        echo "Auth user $NPM_EMAIL [$NPM_USERNAME]" &&
         npm i -g typescript ts-node nodemon &&
         npm i &&
         npm run build &&
-        npm install -g npm-cli-login &&
-        npm-cli-login -u "$NPM_USERNAME" -p "$NPM_TOKEN" -e "$NPM_EMAIL" &&
         npm run deploy &&
         echo "Successfully published version ${NPM_PACKAGE_VERSION} of ${NPM_PACKAGE_NAME} to NPM"
       } || {
