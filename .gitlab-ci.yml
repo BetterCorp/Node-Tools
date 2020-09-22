@@ -1,11 +1,12 @@
 image: node:latest
 
 stages:
-  - build
-  - deploy
+  - buildAndDeploy
 
-build_package:
-  stage: build
+build_only:
+  stage: buildAndDeploy
+  except:
+    - master
   script:
     - |
       {
@@ -18,13 +19,16 @@ build_package:
 # Publish the package. If the version in package.json has not yet been published, it will be
 # published to THE NPM registry. If the version already exists, the publish command
 # will fail and the existing package will not be updated.
-publish_package:
-  stage: deploy
+build_and_deploy:
+  stage: buildAndDeploy
   only:
     - master
   script:
     - |
       {
+        npm i -g typescript ts-node nodemon &&
+        npm i &&
+        npm run build &&
         npm install -g npm-cli-login &&
         npm-cli-login -u $K8S_SECRET_NPM_USERNAME -p $K8S_SECRET_NPM_TOKEN -e $K8S_SECRET_NPM_EMAIL &&
         npm run deploy &&
