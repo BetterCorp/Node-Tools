@@ -21,6 +21,21 @@ export class Tools {
       return true;
     }
   }
+  public static setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
+    let pathSplit = path.split(".");
+    let iPath = pathSplit[0];
+    if (path.indexOf(".") >= 0) {
+      pathSplit.splice(0, 1);
+      workingTemplate[iPath] = this.setUpdatedTemplatePathFinder(
+        pathSplit.join("."),
+        endObj,
+        workingTemplate[iPath] || {}
+      );
+    } else {
+      workingTemplate[iPath] = endObj;
+    }
+    return workingTemplate;
+  }
   static hierachialGetAvailibility<T> (listOfObjects: Array<T>, key: string, parentkey: string, value: T): Array<T> {
     let listToReturn = [];
     for (let thisType of (listOfObjects as any)) {
