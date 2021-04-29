@@ -1,5 +1,7 @@
 import * as MOMENT from 'moment';
 import { MergeObjectsKey } from './Interfaces';
+import * as CryptoAES from 'crypto-js/aes';
+import * as CryptoENC from 'crypto-js/enc-utf8';
 
 var stream = require('stream');
 var Transform = stream.Transform;
@@ -14,6 +16,12 @@ function MemoryStream (options?: any): any {
 }
 
 export class Tools {
+  static encrypt(text: string, key: string) {
+    return CryptoAES.encrypt(text, key).toString();
+  }
+  static decrypt(text: string, key: string) {
+    return CryptoAES.decrypt(text, key).toString(CryptoENC);
+  }
   static inIframe (): boolean {
     try {
       return window.self !== window.top;
