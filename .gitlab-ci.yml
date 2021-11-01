@@ -64,7 +64,6 @@ test:npm:
     - docker
   stage: test
   dependencies:
-    - version:npm
     - build:npm
   before_script:
     - npm ci
