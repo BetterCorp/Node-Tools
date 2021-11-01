@@ -262,6 +262,8 @@ describe('Tools', () => {
           last: "Doe",
           active: true,
           deleted: false,
+          test: null,
+          test2: undefined,
         },
         age: 123,
         colors: ["Red", "Green", "Blue"]
@@ -271,6 +273,8 @@ describe('Tools', () => {
       assert.equal(flatObj['name.deleted'], false);
       assert.equal(flatObj['name.first'], 'Jon');
       assert.equal(flatObj['name.last'], 'Doe');
+      assert.equal(flatObj['name.test'], null);
+      assert.equal(flatObj['name.test2'], undefined);
       assert.equal(flatObj['age'], 123);
       assert.equal(flatObj['colors.0'], 'Red');
       assert.equal(flatObj['colors.1'], 'Green');
