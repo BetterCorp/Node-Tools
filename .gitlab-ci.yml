@@ -1,19 +1,17 @@
-stages:
-  - test
-  
 include:
   - project: 'BetterCorp/cicd'
     ref: master
     file: '/bsb-cicd.yml'
 
-test:tools:
+test:npm:
   image: node:lts-alpine
-  dependencies:
-    - build:npm
   tags:
     - build
     - docker
-  stage: test
+  stage: test:npm
+  dependencies:
+    - version:npm
+    - build:npm
   before_script:
     - npm ci
   script:
