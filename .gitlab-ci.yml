@@ -1,7 +1,8 @@
-include:
-  - project: 'BetterCorp/cicd'
-    ref: master
-    file: '/bsb-cicd.yml'
+stages:
+  - version:npm
+  - build:npm
+  - test:npm
+  - publish:npm
 
 test:npm:
   image: node:lts-alpine
@@ -15,9 +16,62 @@ test:npm:
   before_script:
     - npm ci
   script:
-    - ./node_modules/mocha/bin/mocha
+    - npm run test
   artifacts:
     when: always
     reports:
       junit:
         - junit.xml
+
+version:npm:
+  image: node:lts-alpine
+  tags:
+    - build
+    - docker
+  stage: version:npm
+  before_script:
+    - rm -rfv ./_exports
+    - cat package.json | grep version
+  script:
+    - npm run version -- --branch="${CI_COMMIT_REF_NAME}"
+  after_script:
+    - cat package.json | grep version
+  artifacts:
+    paths:
+      - _exports/*
+      - package-lock.json
+      - package.json
+    expire_in: 1 week
+    
+build:npm:
+  image: node:lts-alpine
+  dependencies:
+    - version:npm
+  tags:
+    - build
+    - docker
+  stage: build:npm
+  before_script:
+    - cat package.json | grep version
+    - rm -f ~/.npmrc
+    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    - npm i -g typescript ts-node
+    - node -v
+    - npm -v
+    - tsc -v
+    - ts-node -v
+    - npm ci
+    - rm -f ~/.npmrc
+  script:
+    - npm run build
+    - npm pack
+  after_script:
+    - rm -f ~/.npmrc
+  artifacts:
+    paths:
+      - _exports/*
+      - "*.tgz"
+      - package-lock.json
+      - package.json
+      - lib
+    expire_in: 1 week
