@@ -2,6 +2,45 @@ const Tools = require('../lib/Tools').Tools;
 const assert = require('assert');
 
 describe('Tools', () => {
+  describe('isUndefined', () => {
+    it('should return false when typeof {}', () => {
+      assert.equal(Tools.isUndefined({}), false);
+    });
+    it('should return false when typeof {object}', () => {
+      let objj = {
+        a: "john",
+        b: "Sam"
+      }
+      assert.equal(Tools.isUndefined(objj), false);
+    });
+    it('should return true when typeof nothing', () => {
+      assert.equal(Tools.isUndefined(), true);
+    });
+    it('should return false when emtpy string', () => {
+      assert.equal(Tools.isUndefined(''), false);
+    });
+    it('should return false when null', () => {
+      assert.equal(Tools.isUndefined(null), false);
+    });
+    it('should return false when "null"', () => {
+      assert.equal(Tools.isUndefined("null"), false);
+    });
+    it('should return false when "undefined"', () => {
+      assert.equal(Tools.isUndefined("undefined"), false);
+    });
+    it('should return true when undefined', () => {
+      assert.equal(Tools.isUndefined(undefined), true);
+    });
+    it('should return false when []', () => {
+      assert.equal(Tools.isUndefined([]), false);
+    });
+    it('should return false when [num array]', () => {
+      assert.equal(Tools.isUndefined([0, 1, 2]), false);
+    });
+    it('should return false when [array]', () => {
+      assert.equal(Tools.isUndefined(["Red", "Green", "Blue"]), false);
+    });
+  });
   describe('isObject', () => {
     it('should return true when typeof {}', () => {
       assert.equal(Tools.isObject({}), true);
