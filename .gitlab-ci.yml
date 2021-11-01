@@ -1,34 +1,15 @@
 stages:
-  - version:npm
-  - build:npm
-  - test:npm
-  - publish:npm
-
-test:npm:
-  image: node:lts-alpine
-  tags:
-    - build
-    - docker
-  stage: test:npm
-  dependencies:
-    - version:npm
-    - build:npm
-  before_script:
-    - npm ci
-  script:
-    - npm run test
-  artifacts:
-    when: always
-    reports:
-      junit:
-        - junit.xml
+  - version
+  - build
+  - test
+  - publish
 
 version:npm:
   image: node:lts-alpine
   tags:
     - build
     - docker
-  stage: version:npm
+  stage: version
   before_script:
     - rm -rfv ./_exports
     - cat package.json | grep version
@@ -50,7 +31,7 @@ build:npm:
   tags:
     - build
     - docker
-  stage: build:npm
+  stage: build
   before_script:
     - cat package.json | grep version
     - rm -f ~/.npmrc
@@ -75,3 +56,51 @@ build:npm:
       - package.json
       - lib
     expire_in: 1 week
+
+test:npm:
+  image: node:lts-alpine
+  tags:
+    - build
+    - docker
+  stage: test
+  dependencies:
+    - version:npm
+    - build:npm
+  before_script:
+    - npm ci
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - junit.xml
+    expire_in: 1 week
+    when: always
+    reports:
+      junit:
+        - junit.xml
+
+publish:npm:
+  image: node:lts-alpine
+  dependencies:
+    - build:npm
+    - test:npm
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
+      when: on_success
+    #- if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
+    #  when: on_success
+    - when: never
+  tags:
+    - build
+    - docker
+  stage: publish
+  before_script:
+    - cat package.json | grep version
+    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_PUB" > ~/.npmrc
+  script:
+    - npm publish
+    - echo RUN PUBLISH
+    - cat package.json
+    - rm -f ~/.npmrc
+  after_script:
+    - rm -f ~/.npmrc
