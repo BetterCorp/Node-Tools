@@ -1,14 +1,15 @@
 import * as MOMENT from 'moment';
-import { MergeObjectsKey } from './Interfaces';
+import { MergeObjectsKey, SimpleStatu } from './Interfaces';
 import * as CryptoAES from 'crypto-js/aes';
 import * as CryptoENC from 'crypto-js/enc-utf8';
+const clone = require('just-clone');
 
 var stream = require('stream');
 var Transform = stream.Transform;
 
-function MemoryStream (options?: any): any {
+function MemoryStream(options?: any): any {
   return new Transform({
-    transform (chunk: any, encoding: any, callback: any) {
+    transform(chunk: any, encoding: any, callback: any) {
       this.push(chunk);
       callback();
     },
@@ -22,16 +23,31 @@ export class Tools {
   static decrypt(text: string, key: string) {
     return CryptoAES.decrypt(text, key).toString(CryptoENC);
   }
-  static inIframe (): boolean {
+  static inIframe(): boolean {
     try {
       return window.self !== window.top;
     } catch (e) {
       return true;
     }
   }
-  public static setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
+  private static _setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
     let pathSplit = path.split(".");
     let iPath = pathSplit[0];
+    if (pathSplit.length === 2) {
+      let isStrNu = Tools.isStringNumber(pathSplit[1]);
+      if (isStrNu.status) {
+        if (!Tools.isArray(workingTemplate[iPath])) {
+          workingTemplate[iPath] = [];
+        }
+        if (isStrNu.value! < workingTemplate[iPath].length) {
+          (workingTemplate[iPath] as Array<any>).splice(isStrNu.value!, 0, endObj);
+        } else {
+          (workingTemplate[iPath] as Array<any>).push(endObj);
+        }
+        // Array
+        return workingTemplate;
+      }
+    }
     if (path.indexOf(".") >= 0) {
       pathSplit.splice(0, 1);
       workingTemplate[iPath] = this.setUpdatedTemplatePathFinder(
@@ -44,7 +60,25 @@ export class Tools {
     }
     return workingTemplate;
   }
-  static hierachialGetAvailibility<T> (listOfObjects: Array<T>, key: string, parentkey: string, value: T): Array<T> {
+  public static setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
+    return this._setUpdatedTemplatePathFinder(path, endObj, clone(workingTemplate));
+  }
+  private static _flattenObject(obj: any): any {
+    // CREDITS: https://gist.github.com/penguinboy/762197
+    let tempA: any = {};
+    for (let i in obj) {
+      if ((typeof obj[i]) == 'object') {
+        let tempB = this._flattenObject(obj[i]);
+        for (let j in tempB) { tempA[i + '.' + j] = tempB[j]; }
+      } else { tempA[i] = obj[i]; }
+    }
+    return tempA;
+  }
+  public static flattenObject(obj: any): any {
+    if (!this.isObject(obj)) throw 'Not a valid object!';
+    return this._flattenObject(obj);
+  }
+  static hierachialGetAvailibility<T>(listOfObjects: Array<T>, key: string, parentkey: string, value: T): Array<T> {
     let listToReturn = [];
     for (let thisType of (listOfObjects as any)) {
       if (thisType[key] === value) {
@@ -56,7 +90,7 @@ export class Tools {
     }
     return listToReturn;
   }
-  static decodeBase64Image (dataString: string): any {
+  static decodeBase64Image(dataString: string): any {
     let matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
       response: any = {};
 
@@ -69,10 +103,10 @@ export class Tools {
 
     return response;
   }
-  static MemoryStream (options?: any) {
+  static MemoryStream(options?: any) {
     return MemoryStream(options);
   }
-  private static GetValueFromObjectBasedOnStringPathSearcher (workingObj: any, stringToGet: string): any {
+  private static GetValueFromObjectBasedOnStringPathSearcher(workingObj: any, stringToGet: string): any {
     if (this.isNullOrUndefined(workingObj)) {
       return null;
     }
@@ -103,7 +137,7 @@ export class Tools {
     }
     return this.GetValueFromObjectBasedOnStringPath(workingObj[splitted[0]], stringToGet.replace(splitted[0] + ".", ""));
   }
-  public static GetValueFromObjectBasedOnStringPath (workingObj: any, stringToGet: string): any {
+  public static GetValueFromObjectBasedOnStringPath(workingObj: any, stringToGet: string): any {
     if (this.isNullOrUndefined(stringToGet)) {
       return null;
     }
@@ -129,7 +163,7 @@ export class Tools {
     }
     return finalString;
   }
-  public static mergeObjects (src: any, against: any, initialMigration: boolean = true, referenceKey?: MergeObjectsKey): any {
+  public static mergeObjects(src: any, against: any, initialMigration: boolean = true, referenceKey?: MergeObjectsKey): any {
     if (!src)
       return against;
     if (!against)
@@ -159,7 +193,7 @@ export class Tools {
 
     return src;
   }
-  public static StringReplaceWithObject (obj: any, str: string): string {
+  public static StringReplaceWithObject(obj: any, str: string): string {
     let strToReplace = str;
     if (strToReplace.indexOf('{') >= 0) {
       let strSplt = strToReplace.split('{');
@@ -170,30 +204,30 @@ export class Tools {
     }
     return strToReplace;
   }
-  public static getTimeFromMilliseconds (time: number) {
+  public static getTimeFromMilliseconds(time: number) {
     if (time < 1000) {
-      return `${time} milliseconds`;
+      return `${ time } milliseconds`;
     }
     let seconds: number = time / 1000;
     if (seconds < 60) {
-      return `${seconds} seconds`;
+      return `${ seconds } seconds`;
     }
     const minutes: number = seconds / 60;
     if (minutes < 60) {
-      return `${minutes} minutes`;
+      return `${ minutes } minutes`;
     }
     const hours: number = minutes / 60;
     if (hours < 60) {
-      return `${hours} hours`;
+      return `${ hours } hours`;
     }
-    return `${hours / 24} days`;
+    return `${ hours / 24 } days`;
   }
-  public static delay (time: number = 1000): Promise<void> {
+  public static delay(time: number = 1000): Promise<void> {
     return new Promise((resolve, reject) => {
       setTimeout(resolve, time);
     });
   }
-  public static async waitDelayThenThrow (checkFunc: Function, rejectFunc: Function, time: number = 1000, timeout: number = 10): Promise<void> {
+  public static async waitDelayThenThrow(checkFunc: Function, rejectFunc: Function, time: number = 1000, timeout: number = 10): Promise<void> {
     let count = 0;
     const causeTimeout = () => {
       count = timeout + 1;
@@ -209,48 +243,57 @@ export class Tools {
       await this.delay(time);
     }
   }
-  public static isString (value: any) {
+  public static isString(value: any) {
     return typeof value === 'string' || value instanceof String;
   }
-  public static isDate (value: any, matchString = true) {
+  public static isDate(value: any, matchString = true) {
     return value instanceof Date;/*
       ? true
       : matchString
         ? this.dateTimeRegex.test(`${value}`)
         : false*/
   }
-  public static isArray (value: any) {
+  public static isArray(value: any) {
     return !this.isNullOrUndefined(value) && typeof value === 'object' && value.constructor === Array && !this.isNullOrUndefined(value.length);
   }
-  public static isFunction (value: any) {
+  public static isFunction(value: any) {
     return typeof value === 'function';
   }
-  public static isSymbol (value: any) {
+  public static isSymbol(value: any) {
     return typeof value === 'symbol';
   }
-  public static isNumber (value: any): boolean {
-    return typeof value === 'number' || !isNaN(value);
+  public static isNumber(value: any): boolean {
+    return typeof value === 'number' && !isNaN(value);
   }
-  public static isBoolean (value: any): boolean {
+  public static isStringNumber(value: any): SimpleStatu<number> {
+    if (this.isNumber(value)) return { status: true, value: value };
+    try {
+      let nValue = Number.parseFloat(`${ value }`);
+      if (this.isNumber(nValue)) return { status: true, value: nValue };
+    } catch (EIgnore) { }
+    return { status: false };
+  }
+  public static isBoolean(value: any): boolean {
     return typeof value === 'boolean';
   }
-  public static isUndefined (value: any): boolean {
+  public static isUndefined(value: any): boolean {
     return typeof value === 'undefined';
   }
-  public static isNull (value: any): boolean {
+  public static isNull(value: any): boolean {
     return value === null;
   }
-  public static isObject (value: any): boolean {
+  public static isObject(value: any): boolean {
+    if (this.isNullOrUndefined(value)) return false;
     return value && typeof value === 'object' && value.constructor === Object;
   }
-  public static isNullOrUndefined (value: any): boolean {
+  public static isNullOrUndefined(value: any): boolean {
     return this.isUndefined(value) || this.isNull(value);
   }
-  static formatDate (time: string | Date | MOMENT.MomentInput, format = "DD/MM/YYYY") {
+  static formatDate(time: string | Date | MOMENT.MomentInput, format = "DD/MM/YYYY") {
     if (this.isNullOrUndefined(time)) return "";
     return MOMENT(time).format(format);
   }
-  static getCurrencySymbol (symbol: string) {
+  static getCurrencySymbol(symbol: string) {
     switch (symbol.toUpperCase()) {
       case 'USD':
         return '$';
@@ -261,7 +304,7 @@ export class Tools {
     }
     return symbol;
   }
-  public static formatCurrency (amount: number | string, decimalPlaces?: number,
+  public static formatCurrency(amount: number | string, decimalPlaces?: number,
     decimalFormatter?: string, thousandsFormatter?: string, symbol?: string | boolean): string {
     decimalPlaces = this.isNullOrUndefined(decimalPlaces) ? 2 : Math.abs(decimalPlaces as number);
     decimalFormatter = this.isNullOrUndefined(decimalFormatter) ? '.' : decimalFormatter;
@@ -289,10 +332,10 @@ export class Tools {
       + numberValueSplit[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsFormatter as string)
       + decimalValue;
   }
-  public static genRandomNumber (min: number, max: number) {
+  public static genRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (+max - +min)) + +min;
   }
-  public static GetKeyForFormat (type: string, amt: number = 1): string {
+  public static GetKeyForFormat(type: string, amt: number = 1): string {
     switch (type) {
       case 'GB': {
         if (amt >= 1000) {
@@ -345,17 +388,17 @@ export class Tools {
     }
     return 'x';
   }
-  public static GetFormatted (speed: number, type: string = 'MB', roundTo: number = 2): string {
+  public static GetFormatted(speed: number, type: string = 'MB', roundTo: number = 2): string {
     while (speed >= 1000) {
       speed = speed / 1000;
     }
     return speed.toFixed(roundTo);
   }
-  public static GetInANiceFormat (speed: number, type: string = 'MB', roundTo: number = 2): string {
+  public static GetInANiceFormat(speed: number, type: string = 'MB', roundTo: number = 2): string {
     const key = this.GetKeyForFormat(type, speed);
     while (speed >= 1000) {
       speed = speed / 1000;
     }
-    return `${this.GetFormatted(speed, type, roundTo)}${key}`;
+    return `${ this.GetFormatted(speed, type, roundTo) }${ key }`;
   }
 }

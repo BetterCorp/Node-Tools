@@ -1,4 +1,25 @@
+stages:
+  - test
+  
 include:
   - project: 'BetterCorp/cicd'
     ref: master
     file: '/bsb-cicd.yml'
+
+test:tools:
+  image: node:lts-alpine
+  dependencies:
+    - build:npm
+  tags:
+    - build
+    - docker
+  stage: test
+  before_script:
+    - npm ci
+  script:
+    - ./node_modules/mocha/bin/mocha
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - junit.xml
