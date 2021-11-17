@@ -33,6 +33,7 @@ export class Tools {
   private static _setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
     let pathSplit = path.split(".");
     let iPath = pathSplit[0];
+    //--
     if (pathSplit.length === 2) {
       let isStrNu = Tools.isStringNumber(pathSplit[1]);
       if (isStrNu.status) {
@@ -48,13 +49,25 @@ export class Tools {
         return workingTemplate;
       }
     }
+    //--
     if (path.indexOf(".") >= 0) {
       pathSplit.splice(0, 1);
-      workingTemplate[iPath] = this.setUpdatedTemplatePathFinder(
-        pathSplit.join("."),
-        endObj,
-        workingTemplate[iPath] || {}
-      );
+      let isStrNu = Tools.isStringNumber(pathSplit[1]);
+      if (isStrNu.status) {
+        if (Tools.isArray(workingTemplate)) {
+          if (isStrNu.value! < workingTemplate[iPath].length) {
+            (workingTemplate[iPath] as Array<any>).splice(isStrNu.value!, 0, endObj);
+          } else {
+            (workingTemplate[iPath] as Array<any>).push(endObj);
+          }
+        }
+      } else {
+        workingTemplate[iPath] = this.setUpdatedTemplatePathFinder(
+          pathSplit.join("."),
+          endObj,
+          workingTemplate[iPath] || {}
+        );
+      }
     } else {
       workingTemplate[iPath] = endObj;
     }

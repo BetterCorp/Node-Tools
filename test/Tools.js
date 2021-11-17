@@ -266,7 +266,15 @@ describe('Tools', () => {
           test2: undefined,
         },
         age: 123,
-        colors: ["Red", "Green", "Blue"]
+        colors: ["Red", "Green", "Blue"],
+        innerArray: [
+          {
+            name: "iArr1"
+          },
+          {
+            name: "iArr2"
+          }
+        ]
       }
       let flatObj = Tools.flattenObject(objToFlat);
       assert.equal(flatObj['name.active'], true);
@@ -279,6 +287,8 @@ describe('Tools', () => {
       assert.equal(flatObj['colors.0'], 'Red');
       assert.equal(flatObj['colors.1'], 'Green');
       assert.equal(flatObj['colors.2'], 'Blue');
+      assert.equal(flatObj['innerArray.0.name'], 'iArr1');
+      assert.equal(flatObj['innerArray.1.name'], 'iArr2');
     });
   });
   describe('setUpdatedTemplatePathFinder', () => {
@@ -401,5 +411,28 @@ describe('Tools', () => {
       assert.equal(output.a.b.c.d[1], "world", "Array order is incorrect/appended to incorrectly");
       assert.equal(output.a.b.c.d[2], "!", "Array order is incorrect/appended to incorrectly");
     });
+    /*it('should set array[1].name object down a obj path', () => {
+      let obj1 = {
+        a: {
+          b: {
+            c: {},
+            x: true
+          }
+        }
+      }
+      let path = 'a.b.c.d.0.name';
+      let value = "hello";
+      let output = Tools.setUpdatedTemplatePathFinder(path, value, obj1);
+      let path2 = 'a.b.c.d.2.name';
+      let value2 = "!";
+      output = Tools.setUpdatedTemplatePathFinder(path2, value2, output);
+      let path3 = 'a.b.c.d.1.name';
+      let value3 = "world";
+      output = Tools.setUpdatedTemplatePathFinder(path3, value3, output);
+      assert.equal(Tools.isArray(output.a.b.c.d), true, "Change was not correctly placed into an array object");
+      assert.equal(output.a.b.c.d[0].name, "hello", "Array order is incorrect/appended to incorrectly object");
+      assert.equal(output.a.b.c.d[1].name, "world", "Array order is incorrect/appended to incorrectly object");
+      assert.equal(output.a.b.c.d[2].name, "!", "Array order is incorrect/appended to incorrectly object");
+    });*/
   });
 });
