@@ -285,6 +285,7 @@ export class Tools {
   public static isStringNumber(value: any): SimpleStatu<number> {
     if (this.isNumber(value)) return { status: true, value: value };
     try {
+      if (`${ value }`.split('.').length > 2) return { status: false };
       let nValue = Number.parseFloat(`${ value }`);
       if (this.isNumber(nValue)) return { status: true, value: nValue };
     } catch (EIgnore) { }
