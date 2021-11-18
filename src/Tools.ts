@@ -52,7 +52,7 @@ export class Tools {
           workingTemplate[iPath] = this._setUpdatedTemplatePathFinderArrayHandler(isStrNu.value!, workingTemplate[iPath], endObj);
           return workingTemplate;
         }
-        throw "There is no nice way to handle an item in an array // need some sort of object then recalc / convert to array later"
+        throw "There is no nice way to handle an item in an array // need some sort of object then recalc / convert to array later";
       } else {
         workingTemplate[iPath] = this._setUpdatedTemplatePathFinder(
           pathSplit.join("."),
@@ -285,8 +285,10 @@ export class Tools {
   public static isStringNumber(value: any): SimpleStatu<number> {
     if (this.isNumber(value)) return { status: true, value: value };
     try {
-      if (`${ value }`.split('.').length > 2) return { status: false };
-      let nValue = Number.parseFloat(`${ value }`);
+      const valueAsString = `${ value }`;
+      if (valueAsString.split('.').length > 2) return { status: false };
+      if (/[A-Za-z]/g.test(valueAsString)) return { status: false };
+      let nValue = Number.parseFloat(valueAsString);
       if (this.isNumber(nValue)) return { status: true, value: nValue };
     } catch (EIgnore) { }
     return { status: false };

@@ -155,6 +155,12 @@ describe('Tools', () => {
     it('should return false when IP Address string', () => {
       assert.equal(Tools.isStringNumber('192.168.0.1').status, false);
     });
+    it('should return false when half string', () => {
+      assert.equal(Tools.isStringNumber('a1a').status, false);
+    });
+    it('should return false when starts with number, but is string', () => {
+      assert.equal(Tools.isStringNumber('1proof').status, false);
+    });
     it('should return false when null', () => {
       assert.equal(Tools.isStringNumber(null).status, false);
     });
