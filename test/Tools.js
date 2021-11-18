@@ -149,6 +149,12 @@ describe('Tools', () => {
     it('should return false when emtpy string', () => {
       assert.equal(Tools.isStringNumber('').status, false);
     });
+    it('should return false when IP Address string', () => {
+      assert.equal(Tools.isStringNumber('0.0.0.0').status, false);
+    });
+    it('should return false when IP Address string', () => {
+      assert.equal(Tools.isStringNumber('192.168.0.1').status, false);
+    });
     it('should return false when null', () => {
       assert.equal(Tools.isStringNumber(null).status, false);
     });
