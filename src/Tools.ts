@@ -30,29 +30,38 @@ export class Tools {
       return true;
     }
   }
+  private static _setUpdatedTemplatePathFinderArrayHandler(index: number, workingArr: Array<any>, value: any): any {
+    if (index < workingArr.length) {
+      workingArr.splice(index, 0, value);
+    } else {
+      workingArr.push(value);
+    }
+    return workingArr;
+  }
   private static _setUpdatedTemplatePathFinder(path: string, endObj: any, workingTemplate: any): any {
     let pathSplit = path.split(".");
     let iPath = pathSplit[0];
-    //--
-    if (pathSplit.length === 2) {
-      let isStrNu = Tools.isStringNumber(pathSplit[1]);
+    if (path.indexOf(".") >= 0) {
+      pathSplit.splice(0, 1);
+      let isStrNu = Tools.isStringNumber(pathSplit[0]);
       if (isStrNu.status) {
         if (!Tools.isArray(workingTemplate[iPath])) {
           workingTemplate[iPath] = [];
         }
-        if (isStrNu.value! < workingTemplate[iPath].length) {
-          (workingTemplate[iPath] as Array<any>).splice(isStrNu.value!, 0, endObj);
-        } else {
-          (workingTemplate[iPath] as Array<any>).push(endObj);
+        if (pathSplit.length < 2) {
+          workingTemplate[iPath] = this._setUpdatedTemplatePathFinderArrayHandler(isStrNu.value!, workingTemplate[iPath], endObj);
+          return workingTemplate;
         }
-        // Array
-        return workingTemplate;
+        throw "There is no nice way to handle an item in an array // need some sort of object then recalc / convert to array later"
+      } else {
+        workingTemplate[iPath] = this._setUpdatedTemplatePathFinder(
+          pathSplit.join("."),
+          endObj,
+          workingTemplate[iPath] || {}
+        );
       }
-    }
-    //--
-    if (path.indexOf(".") >= 0) {
-      pathSplit.splice(0, 1);
-      let isStrNu = Tools.isStringNumber(pathSplit[1]);
+    } else {
+      let isStrNu = Tools.isStringNumber(iPath);
       if (isStrNu.status) {
         if (Tools.isArray(workingTemplate)) {
           if (isStrNu.value! < workingTemplate[iPath].length) {
@@ -60,16 +69,11 @@ export class Tools {
           } else {
             (workingTemplate[iPath] as Array<any>).push(endObj);
           }
+        } else {
+          workingTemplate[iPath] = [endObj];
         }
-      } else {
-        workingTemplate[iPath] = this.setUpdatedTemplatePathFinder(
-          pathSplit.join("."),
-          endObj,
-          workingTemplate[iPath] || {}
-        );
-      }
-    } else {
-      workingTemplate[iPath] = endObj;
+      } else
+        workingTemplate[iPath] = endObj;
     }
     return workingTemplate;
   }

@@ -267,8 +267,7 @@ describe('Tools', () => {
         },
         age: 123,
         colors: ["Red", "Green", "Blue"],
-        innerArray: [
-          {
+        innerArray: [{
             name: "iArr1"
           },
           {
@@ -351,8 +350,8 @@ describe('Tools', () => {
       let path = 'a.b.c.d.0';
       let value = "hello";
       let output = Tools.setUpdatedTemplatePathFinder(path, value, obj1)
-      assert.equal(Tools.isArray(output.a.b.c.d), true, "Change was not correctly placed into an array");
-      assert.equal(output.a.b.c.d[0], "hello", "Array was not set to correctly");
+      assert.equal(Tools.isArray(output.a.b.c.d), true, `Change was not correctly placed into an array (${typeof output.a.b.c.d}) (${JSON.stringify(output.a.b.c.d)})`);
+      assert.equal(output.a.b.c.d[0], "hello", `Array was not set to correctly (${JSON.stringify(output.a.b.c.d)})`);
     });
     it('should set array down a obj path', () => {
       let obj1 = {
@@ -411,28 +410,40 @@ describe('Tools', () => {
       assert.equal(output.a.b.c.d[1], "world", "Array order is incorrect/appended to incorrectly");
       assert.equal(output.a.b.c.d[2], "!", "Array order is incorrect/appended to incorrectly");
     });
-    /*it('should set array[1].name object down a obj path', () => {
-      let obj1 = {
-        a: {
-          b: {
-            c: {},
-            x: true
+    it('should set array[1].name object down a obj path', () => {
+      let exceptCaught = false;
+      try {
+        let obj1 = {
+          a: {
+            b: {
+              c: {},
+              x: true
+            }
           }
         }
+        let path = 'a.b.c.d.0.name';
+        let value = "hello";
+        let output = Tools.setUpdatedTemplatePathFinder(path, value, obj1);
+        let path2 = 'a.b.c.d.2.name';
+        let value2 = "!";
+        output = Tools.setUpdatedTemplatePathFinder(path2, value2, output);
+        let path3 = 'a.b.c.d.1.name';
+        let value3 = "world";
+        output = Tools.setUpdatedTemplatePathFinder(path3, value3, output);
+        let path4 = 'a.b.c.d.1.value';
+        let value4 = "cheese";
+        output = Tools.setUpdatedTemplatePathFinder(path3, value3, output);
+        console.log(JSON.stringify(output))
+        console.log(JSON.stringify(output.a.b.c.d))
+        assert.equal(Tools.isArray(output.a.b.c.d), true, "Change was not correctly placed into an array object");
+        assert.equal(output.a.b.c.d[0].name, "hello", "Array order is incorrect/appended to incorrectly object (0)");
+        assert.equal(output.a.b.c.d[1].name, "world", "Array order is incorrect/appended to incorrectly object (1)");
+        assert.equal(output.a.b.c.d[2].name, "!", "Array order is incorrect/appended to incorrectly object (2)");
+        assert.equal(output.a.b.c.d[1].value, "cheese", "Array order is incorrect/appended to incorrectly object (value in 1)");
+      } catch (exc) {
+        exceptCaught = true;
       }
-      let path = 'a.b.c.d.0.name';
-      let value = "hello";
-      let output = Tools.setUpdatedTemplatePathFinder(path, value, obj1);
-      let path2 = 'a.b.c.d.2.name';
-      let value2 = "!";
-      output = Tools.setUpdatedTemplatePathFinder(path2, value2, output);
-      let path3 = 'a.b.c.d.1.name';
-      let value3 = "world";
-      output = Tools.setUpdatedTemplatePathFinder(path3, value3, output);
-      assert.equal(Tools.isArray(output.a.b.c.d), true, "Change was not correctly placed into an array object");
-      assert.equal(output.a.b.c.d[0].name, "hello", "Array order is incorrect/appended to incorrectly object");
-      assert.equal(output.a.b.c.d[1].name, "world", "Array order is incorrect/appended to incorrectly object");
-      assert.equal(output.a.b.c.d[2].name, "!", "Array order is incorrect/appended to incorrectly object");
-    });*/
+      assert.equal(exceptCaught, true, "Cannot handle objects in arrays nicely...");
+    });
   });
 });
