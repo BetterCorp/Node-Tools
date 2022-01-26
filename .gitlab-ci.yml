@@ -34,20 +34,16 @@ build:npm:
   stage: build
   before_script:
     - cat package.json | grep version
-    - rm -f ~/.npmrc
-    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    - rm -f ~/.npmrc ; rm -f ./.npmrc ; echo "//registry.npmjs.org/:_authToken=\${NPM2_TOKEN}" > ./.npmrc
     - npm i -g typescript ts-node
     - node -v
     - npm -v
     - tsc -v
     - ts-node -v
     - npm ci
-    - rm -f ~/.npmrc
   script:
     - npm run build
     - npm pack
-  after_script:
-    - rm -f ~/.npmrc
   artifacts:
     paths:
       - _exports/*
@@ -95,11 +91,8 @@ publish:npm:
   stage: publish
   before_script:
     - cat package.json | grep version
-    - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN_PUB" > ~/.npmrc
+    - rm -f ~/.npmrc ; rm -f ./.npmrc ; echo "//registry.npmjs.org/:_authToken=\${NPM2_TOKEN_PUB}" > ./.npmrc
   script:
     - npm publish
     - echo RUN PUBLISH
     - cat package.json
-    - rm -f ~/.npmrc
-  after_script:
-    - rm -f ~/.npmrc
