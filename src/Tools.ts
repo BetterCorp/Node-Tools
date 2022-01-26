@@ -287,7 +287,8 @@ export class Tools {
     try {
       const valueAsString = `${ value }`;
       if (valueAsString.split('.').length > 2) return { status: false };
-      if (/[A-Za-z]/g.test(valueAsString)) return { status: false };
+      if (valueAsString.split(',').length > 2) return { status: false };
+      if (!(/^[0-9 ,.\-]{1,}$/g.test(valueAsString))) return { status: false };
       let nValue = Number.parseFloat(valueAsString);
       if (this.isNumber(nValue)) return { status: true, value: nValue };
     } catch (EIgnore) { }

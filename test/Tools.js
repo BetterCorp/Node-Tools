@@ -155,6 +155,10 @@ describe('Tools', () => {
     it('should return false when IP Address string', () => {
       assert.equal(Tools.isStringNumber('192.168.0.1').status, false);
     });
+    it('should return false when Cron string', () => {
+      assert.equal(Tools.isStringNumber('0 1,13,19 * * *').status, false);
+      assert.equal(Tools.isStringNumber('0 2 * * *').status, false);
+    });
     it('should return false when half string', () => {
       assert.equal(Tools.isStringNumber('a1a').status, false);
     });
