@@ -17,6 +17,9 @@ function MemoryStream(options?: any): any {
 }
 
 export class Tools {
+  static enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
+    return Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
+  }
   static encrypt(text: string, key: string) {
     return CryptoAES.encrypt(text, key).toString();
   }
