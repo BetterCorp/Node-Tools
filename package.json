@@ -13,6 +13,7 @@
   "repository": {
     "url": "https://gitlab.com/BetterCorp/tools"
   },
+  "homepage": "https://tools.bsbcode.dev/",
   "files": [
     "lib/**/*"
   ],
