@@ -30,7 +30,8 @@ export default defineUserConfig({
       {
         text: 'Interfaces',
         link: '/Interfaces',
-      }
+      },
+      { text: 'NPM', link: 'https://www.npmjs.com/package/@bettercorp/tools', target:'_self'},
     ],
   }),
   bundler: viteBundler({
