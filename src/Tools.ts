@@ -13,11 +13,11 @@ export enum CleanStringStrength {
 }
 export class Tools {
   public static readonly regexes = {
-    exhard: /(?![A-Za-z0-9])/g,
+    exhard: /(?![A-Za-z0-9])[\W_]/g,
     hard: /(?![,-:~_])[\W]/g,
     soft: /(?![,-:~ +_.@])[\W]/g,
     url: /(?![,-:~ +_.@\/\?=&%])[\W]/g,
-    ip: /(?![.0-9])[\W]/g,
+    ip: /(?![.0-9:%/])[\W_]/g,
   };
 
   public static cleanString(
