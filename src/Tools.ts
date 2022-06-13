@@ -13,7 +13,7 @@ export enum CleanStringStrength {
 }
 export class Tools {
   public static readonly regexes = {
-    exhard: /[\W]/g,
+    exhard: /(?![A-Za-z0-9])/g,
     hard: /(?![,-:~_])[\W]/g,
     soft: /(?![,-:~ +_.@])[\W]/g,
     url: /(?![,-:~ +_.@\/\?=&%])[\W]/g,
