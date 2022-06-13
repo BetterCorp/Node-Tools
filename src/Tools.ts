@@ -7,11 +7,13 @@ const clone = require("just-clone");
 export enum CleanStringStrength {
   soft = "soft",
   hard = "hard",
+  exhard = "exhard",
   url = "url",
   ip = "ip",
 }
 export class Tools {
   public static readonly regexes = {
+    exhard: /[\W]/g,
     hard: /(?![,-:~_])[\W]/g,
     soft: /(?![,-:~ +_.@])[\W]/g,
     url: /(?![,-:~ +_.@\/\?=&%])[\W]/g,
