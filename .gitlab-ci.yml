@@ -71,8 +71,7 @@ test:npm:
     expire_in: 1 week
     when: always
     reports:
-      junit:
-        - junit.xml
+      junit: junit.xml
 
 publish:npm:
   image: node:lts-alpine
