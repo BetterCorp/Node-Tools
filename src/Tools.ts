@@ -28,6 +28,9 @@ export class Tools {
   ) {
     let regx = Tools.regexes.hard;
     switch (strength) {
+      case CleanStringStrength.exhard:
+        regx = Tools.regexes.exhard;
+        break;
       case CleanStringStrength.soft:
         regx = Tools.regexes.soft;
         break;
