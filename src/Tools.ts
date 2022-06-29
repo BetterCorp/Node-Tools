@@ -50,7 +50,7 @@ export class Tools {
     if (data === "null") return returnNullAndUndefined ? null : "";
     return data;
   }
-  static autoCapitalizeWords(data: string): string {
+  public static autoCapitalizeWords(data: string): string {
     const words = data.split(" ");
 
     for (let i = 0; i < words.length; i++) {
