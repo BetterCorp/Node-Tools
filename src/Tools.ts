@@ -582,6 +582,16 @@ export class Tools {
     await new Promise((r) => setTimeout(r, milliseconds));
   }
   public static arrays = {
+    mapAsync: async <Input = any, Output = any>(
+      arr: Array<Input>,
+      asyncCallback: { (item: Input): Promise<Output> }
+    ): Promise<Array<Output>> => {
+      return await Promise.all(
+        arr.map(async (item: Input): Promise<Output> => {
+          return await asyncCallback(item);
+        })
+      );
+    },
     groupListBy: <T = any>(
       groupFunc: { (object: T): string },
       list: Array<T>
