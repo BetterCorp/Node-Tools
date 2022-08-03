@@ -39,6 +39,6 @@ jobs:
         reporter: mocha-json
 
     - name: Coverage Report
-    - uses: tintef/nyc-reporter-action
+      uses: tintef/nyc-reporter-action
       with:
         REPORTER: 'json'
