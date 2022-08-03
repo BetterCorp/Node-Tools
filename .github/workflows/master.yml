@@ -57,11 +57,6 @@ jobs:
         path: junit.json
         reporter: mocha-json
 
-    - name: Coverage Report
-      uses: Tintef/nyc-reporter-action@0.2.5
-      with:
-        REPORTER: 'json'
-
     # - run: npm test
     - name: output version
       run: |
