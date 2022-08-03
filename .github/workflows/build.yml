@@ -6,10 +6,10 @@ name: Build
 on:
   push:
     branches:
-      - '**'
-      - '!master'
+      - "**"
+      - "!master"
     tags-ignore:
-      - '**'
+      - "**"
 
 jobs:
   build:
@@ -17,28 +17,52 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x,18.x]
+        node-version: [16.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - run: npm run test
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
 
-    - name: Test Report
-      uses: dorny/test-reporter@v1.5.0
-      with:
-        name: Tests
-        path: junit.json
-        reporter: mocha-json
+      - name: Test Report
+        uses: dorny/test-reporter@v1.5.0
+        with:
+          name: Tests
+          path: junit.json
+          reporter: mocha-json
 
-    - name: Coverage Report
-      uses: Tintef/nyc-reporter-action@0.2.5
-      with:
-        REPORTER: 'json'
+      - name: Coverage Report
+        uses: Tintef/nyc-reporter-action@0.2.5
+        with:
+          REPORTER: "json"
+
+  buildDocs:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+        working-directory: documentation/
+
+      - run: npm run build
+        working-directory: documentation/
