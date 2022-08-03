@@ -6,8 +6,8 @@ export default defineUserConfig({
   title: 'Better-Tools Documentation',
   description: 'Better-Tools - just a bunch of useful functions for everyday life',
   theme: defaultTheme({
-    repo: 'https://gitlab.com/BetterCorp/tools',
-    docsRepo: 'https://gitlab.com/BetterCorp/tools',
+    repo: 'https://github.com/BetterCorp/Node-Tools',
+    docsRepo: 'https://github.com/BetterCorp/Node-Tools',
     //docsBranch: 'documentation',
     // default theme config
     navbar: [

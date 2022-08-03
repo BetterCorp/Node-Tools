@@ -16,4 +16,4 @@ cleanString("hello world")
   
   
 ... yea still have to do more, for now just look at the Tools TS file... 
-[https://gitlab.com/BetterCorp/tools/-/blob/master/src/Tools.ts](https://gitlab.com/BetterCorp/tools/-/blob/master/src/Tools.ts)
+[https://github.com/BetterCorp/Node-Tools/-/blob/master/src/Tools.ts](https://github.com/BetterCorp/Node-Tools/-/blob/master/src/Tools.ts)
