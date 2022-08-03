@@ -34,7 +34,7 @@ jobs:
         major_pattern: "(MAJOR)"
         minor_pattern: "(MINOR)"
         format: "${major}.${minor}.${patch}-beta${increment}"
-        change_path: "src/"
+        change_path: "./"
         bump_each_commit: true
         namespace: ""
     - run: rm -f ~/.npmrc ; rm -f ./.npmrc ; echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM2_TOKEN_PUB }}" > ./.npmrc
@@ -51,7 +51,7 @@ jobs:
         name: JEST Tests
         path: junit.xml
         reporter: jest-junit
-        
+
     # - run: npm test
     - name: output version
       run: |

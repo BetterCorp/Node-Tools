@@ -34,7 +34,7 @@ jobs:
         major_pattern: "(MAJOR)"
         minor_pattern: "(MINOR)"
         format: "${major}.${minor}.${patch}"
-        change_path: "src/"
+        change_path: "./"
         bump_each_commit: true
         namespace: ""
     - run: |
@@ -56,7 +56,7 @@ jobs:
         name: JEST Tests
         path: junit.xml
         reporter: jest-junit
-        
+
     # - run: npm test
     - name: output version
       run: |
