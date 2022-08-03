@@ -2,3 +2,5 @@
 node_modules
 /junit.xml
 /junit.json
+/.nyc_output
+/coverage

@@ -37,3 +37,8 @@ jobs:
         name: Tests
         path: junit.json
         reporter: mocha-json
+
+    - name: Coverage Report
+    - uses: tintef/nyc-reporter-action
+      with:
+        REPORTER: 'json'
