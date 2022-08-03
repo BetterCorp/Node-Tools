@@ -48,9 +48,9 @@ jobs:
     - name: Test Report
       uses: dorny/test-reporter@v1.5.0
       with:
-        name: JEST Tests
-        path: junit.xml
-        reporter: jest-junit
+        name: Tests
+        path: junit.json
+        reporter: mocha-json
 
     # - run: npm test
     - name: output version

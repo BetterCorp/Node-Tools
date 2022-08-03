@@ -5,7 +5,7 @@
     "start": "node lib/index.js",
     "build": "tsc",
     "deploy": "npm publish",
-    "test": "node ./node_modules/mocha/bin/mocha.js --reporter mocha-junit-reporter --reporter-options mochaFile=junit.xml",
+    "test": "node ./node_modules/mocha/bin/mocha.js --reporter json --reporter-options output=junit.json",
     "testDev": "node ./node_modules/mocha/bin/mocha.js"
   },
   "license": "AGPL-3.0-only",
