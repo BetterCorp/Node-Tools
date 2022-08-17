@@ -27,3 +27,31 @@ let myObj: IDictionary<number> = {
 // So by using IDictionary, we can reference items by their index without the warnings/errors
 myObj["a"];
 ```
+
+## ParamsFromString  
+
+Use string interpolation like this, but dynamically in a string.  
+```typescript  
+const var1 = "abc";
+console.log(`var is: ${var1}`);
+```  
+
+```typescript  
+public format(message: string, meta: object) {  
+  // do blah here to format  
+}  
+format("this var: {var1}", {  
+  var1: "abc"  
+});  
+```  
+
+```typescript  
+import { ParamsFromString } from '@bettercorp/tools/lib/Interfaces';  
+function format<T extends string>(message: T, meta: Record<ParamsFromString<T>, string>) {  
+  // do blah here to format  
+}  
+format("this var: {var1}", { var1: "abc" });  
+format("this var: {var1}", { bad: "abc" }); // type error  
+
+// ref: https://stackoverflow.com/a/73394054/8083582  
+```   
