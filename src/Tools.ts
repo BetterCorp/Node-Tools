@@ -379,6 +379,11 @@ export class Tools {
       await this.delay(time);
     }
   }
+  public static isSimpleType(value: any): boolean {
+    return (
+      Tools.isBoolean(value) || Tools.isNumber(value) || Tools.isString(value)
+    );
+  }
   public static isString(value: any) {
     return typeof value === "string" || value instanceof String;
   }
