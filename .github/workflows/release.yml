@@ -6,7 +6,7 @@ on:
       - "release"
 
 jobs:
-  buildTag:
+  release:
     runs-on: ubuntu-latest
 
     strategy:
