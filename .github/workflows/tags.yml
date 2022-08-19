@@ -6,51 +6,6 @@ on:
       - "v*"
 
 jobs:
-  buildTag:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: npm ci
-
-      - run: rm -f ~/.npmrc ; rm -f ./.npmrc ; echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM2_TOKEN_PUB }}" > ./.npmrc
-      - run: |
-          git config user.name "${{ secrets.NPM_NAME }}";
-          git config user.email "${{ secrets.NPM_EMAIL }}";
-          echo "Hello $(git config --get user.name)";
-      - run: npm run build
-      # - run: npm test
-      - name: output version
-        run: |
-          echo "Setting version too: ${GITHUB_REF#refs/tags/v}";
-      - run: npm version --no-git-tag-version ${GITHUB_REF#refs/tags/v}
-      - run: npm config set sign-git-tag true
-      - run: npm publish
-
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: "v${GITHUB_REF#refs/tags/v}"
-          name: "v${GITHUB_REF#refs/tags/v}"
-          body: "See release: https://www.npmjs.com/package/@bettercorp/tools/v/${GITHUB_REF#refs/tags/v}"
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: cleanup
-        if: always()
-        run: rm -f ~/.npmrc ; rm -f ./.npmrc;
-
   buildDocsTag:
     runs-on: ubuntu-latest
 
