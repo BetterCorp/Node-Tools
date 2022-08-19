@@ -23,6 +23,7 @@ export type ParamsFromString<T extends string> =
     : // No params exist in these string, so return never.
       never;
 
+
 export type DynamicallyReferencedMethod<
   Interface extends IDictionary<Function>,
   Method extends string,
