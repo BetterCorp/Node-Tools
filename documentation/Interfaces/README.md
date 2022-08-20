@@ -61,7 +61,7 @@ format("this var: {var1}", { bad: "abc" }); // type error
 Let's say we have an interface to define a class.  
 That interface looks something like this:  
 ```typescript
-interface myInterface extends DynamicallyReferencedMethodBase { // We need the extended type IDictionary<Function> here to make this type work. We created a simple interface for it.    
+interface myInterface {
   func1(): void;  
   func2(a: string): void;  
   func3(a: string): boolean;  
@@ -70,7 +70,7 @@ interface myInterface extends DynamicallyReferencedMethodBase { // We need the e
 ```  
 And our main class  
 ```typescript  
-class myClass extends DynamicallyReferencedMethodClass implements myInterface { // We need the index key added to the class, so we created a base class to do that.  
+class myClass implements myInterface {
   func1(): void {  
     return;  
   };  
@@ -89,13 +89,13 @@ class myClass extends DynamicallyReferencedMethodClass implements myInterface { 
 Now the whole reason for this type is so we can easily reference methods in `myClass` from within a different class from another place and without loading `myClass`.  
 
 ```typescript  
-class myOtherClass<T extends DynamicallyReferencedMethodBase> {  
+class myOtherClass<T> {  
   private referenceClass: myClass;  
   constructor () {  
     this.referenceClass = new myClass();  
   }  
-  callFunction<TA extends string> (...args: DynamicallyReferencedMethod<T, TA>): DynamicallyReferencedMethod<T,TA, false> {  
-    return this.referenceClass[args[0]](...((args.length > 1 ? args.splice(1) : [])));  
+  callFunction<TA extends string> (...args: DynamicallyReferencedMethod<DynamicallyReferencedMethodType<T>, TA>): DynamicallyReferencedMethod<DynamicallyReferencedMethodType<T>,TA, false> {  
+    return (this.referenceClass as DynamicallyReferencedMethodType<myClass>)[args.splice(0,1)[0] as TA](...args);  
   }  
 }  
 ```  

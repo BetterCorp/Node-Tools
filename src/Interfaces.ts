@@ -23,9 +23,8 @@ export type ParamsFromString<T extends string> =
     : // No params exist in these string, so return never.
       never;
 
-
 export type DynamicallyReferencedMethod<
-  Interface extends IDictionary<Function>,
+  Interface extends DynamicallyReferencedType,
   Method extends string,
   ArgsReference extends boolean = true
 > = ArgsReference extends true
@@ -42,11 +41,10 @@ export type DynamicallyReferencedMethod<
   : // Else we return a never as it doesn't exist
     never;
 
-export interface DynamicallyReferencedMethodBase
-  extends IDictionary<Function | any> {}
+export type DynamicallyReferencedType = IDictionary<Function>;
 
-export class DynamicallyReferencedMethodClass
-  implements DynamicallyReferencedMethodBase
-{
-  [index: string]: Function | any;
-}
+export interface DynamicallyReferencedMethodBase
+  extends DynamicallyReferencedType {}
+
+export type DynamicallyReferencedMethodType<T> = T &
+  DynamicallyReferencedMethodBase;
