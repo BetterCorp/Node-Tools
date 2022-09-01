@@ -29,7 +29,7 @@
   "dependencies": {
     "@types/node": "^18.11.8",
     "crypto-js": "^4.1.1",
-    "just-clone": "^6.0.1",
+    "just-clone": "^6.1.1",
     "moment": "^2.29.4"
   }
 }
