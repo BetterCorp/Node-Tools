@@ -1,5 +1,9 @@
 import * as MOMENT from "moment";
-import { IDictionary, MergeObjectsKey, SimpleStatu } from "./Interfaces";
+import {
+  IDictionary,
+  MergeObjectsKey,
+  SimpleStatu,
+} from "./Interfaces";
 import * as CryptoAES from "crypto-js/aes";
 import * as CryptoENC from "crypto-js/enc-utf8";
 const clone = require("just-clone");
@@ -21,35 +25,82 @@ export class Tools {
   };
 
   public static cleanString(
+    objectToClean: any
+  ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+  ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: RegExp,
+  ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: CleanStringStrength,
+  ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: RegExp,
+    returnNullAndUndefined: true
+  ): undefined | null | string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: RegExp,
+    returnNullAndUndefined: false
+  ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: CleanStringStrength,
+    returnNullAndUndefined: true
+    ): undefined | null | string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: CleanStringStrength,
+    returnNullAndUndefined: false
+  ): string;  
+  public static cleanString<T extends boolean = false>(
     objectToClean: any,
     maxLimit: number = 255,
-    strength: CleanStringStrength = CleanStringStrength.hard,
+    strength: RegExp | CleanStringStrength = CleanStringStrength.hard,
     returnNullAndUndefined: boolean = false
-  ) {
+  ): undefined | null | string {
     let regx = Tools.regexes.hard;
-    switch (strength) {
-      case CleanStringStrength.exhard:
-        regx = Tools.regexes.exhard;
-        break;
-      case CleanStringStrength.soft:
-        regx = Tools.regexes.soft;
-        break;
-      case CleanStringStrength.url:
-        regx = Tools.regexes.url;
-        break;
-      case CleanStringStrength.ip:
-        regx = Tools.regexes.ip;
-        break;
+    if ((strength as RegExp).test !== undefined) {
+      regx = strength as RegExp;
+    } else {
+      switch (strength) {
+        case CleanStringStrength.exhard:
+          regx = Tools.regexes.exhard;
+          break;
+        case CleanStringStrength.soft:
+          regx = Tools.regexes.soft;
+          break;
+        case CleanStringStrength.url:
+          regx = Tools.regexes.url;
+          break;
+        case CleanStringStrength.ip:
+          regx = Tools.regexes.ip;
+          break;
+      }
     }
     let data = `${objectToClean}`
       .trim()
       .replace(regx, "")
       .trim()
       .substring(0, maxLimit || 255);
-    if (data === "undefined") return returnNullAndUndefined ? undefined : "";
-    if (data === "null") return returnNullAndUndefined ? null : "";
+    if (data === "undefined")
+      return returnNullAndUndefined === true ? undefined : "";
+    if (data === "null") return returnNullAndUndefined === true ? null : "";
     return data;
   }
+
   public static autoCapitalizeWords(data: string): string {
     const words = data.split(" ");
 
