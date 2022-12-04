@@ -1,11 +1,9 @@
 import * as MOMENT from "moment";
-import {
-  IDictionary,
-  MergeObjectsKey,
-  SimpleStatu,
-} from "./Interfaces";
+import { IDictionary, MergeObjectsKey, SimpleStatu } from "./Interfaces";
 import * as CryptoAES from "crypto-js/aes";
 import * as CryptoENC from "crypto-js/enc-utf8";
+import { readdir, stat } from "fs";
+import path = require("path");
 const clone = require("just-clone");
 
 export enum CleanStringStrength {
@@ -24,22 +22,17 @@ export class Tools {
     ip: /(?![.0-9:%/])[\W_]/g,
   };
 
+  public static cleanString(objectToClean: any): string;
+  public static cleanString(objectToClean: any, maxLimit: number): string;
   public static cleanString(
-    objectToClean: any
+    objectToClean: any,
+    maxLimit: number,
+    strength: RegExp
   ): string;
   public static cleanString(
     objectToClean: any,
     maxLimit: number,
-  ): string;
-  public static cleanString(
-    objectToClean: any,
-    maxLimit: number,
-    strength: RegExp,
-  ): string;
-  public static cleanString(
-    objectToClean: any,
-    maxLimit: number,
-    strength: CleanStringStrength,
+    strength: CleanStringStrength
   ): string;
   public static cleanString(
     objectToClean: any,
@@ -58,13 +51,13 @@ export class Tools {
     maxLimit: number,
     strength: CleanStringStrength,
     returnNullAndUndefined: true
-    ): undefined | null | string;
+  ): undefined | null | string;
   public static cleanString(
     objectToClean: any,
     maxLimit: number,
     strength: CleanStringStrength,
     returnNullAndUndefined: false
-  ): string;  
+  ): string;
   public static cleanString<T extends boolean = false>(
     objectToClean: any,
     maxLimit: number = 255,
@@ -99,6 +92,35 @@ export class Tools {
       return returnNullAndUndefined === true ? undefined : "";
     if (data === "null") return returnNullAndUndefined === true ? null : "";
     return data;
+  }
+
+  public walkFilePath(
+    dir: string,
+    returnFullPath: boolean = false
+  ): Promise<Array<string>> {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      let results: Array<any> = [];
+      readdir(dir, (err, list) => {
+        if (err) return reject(err);
+        var pending = list.length;
+        if (!pending) return resolve(results);
+        list.forEach((file) => {
+          if (returnFullPath) file = path.resolve(dir, file);
+          stat(path.resolve(dir, file), (err, stat) => {
+            if (stat && stat.isDirectory()) {
+              self.walkFilePath(file).then((res) => {
+                results = results.concat(res);
+                if (!--pending) resolve(results);
+              });
+            } else {
+              results.push(file);
+              if (!--pending) resolve(results);
+            }
+          });
+        });
+      });
+    });
   }
 
   public static autoCapitalizeWords(data: string): string {
