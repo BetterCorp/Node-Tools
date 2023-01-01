@@ -27,7 +27,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
-    "@types/node": "^18.11.10",
+    "@types/node": "^18.11.18",
     "crypto-js": "^4.1.1",
     "just-clone": "^6.1.1",
     "moment": "^2.29.4"
