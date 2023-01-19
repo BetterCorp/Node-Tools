@@ -195,14 +195,16 @@ export class Tools {
       let isStrNu = Tools.isStringNumber(iPath);
       if (isStrNu.status) {
         if (Tools.isArray(workingTemplate)) {
-          if (isStrNu.value! < workingTemplate[iPath].length) {
-            (workingTemplate[iPath] as Array<any>).splice(
+          if (isStrNu.value! < (workingTemplate as IDictionary)[iPath].length) {
+            ((workingTemplate as IDictionary)[iPath] as Array<any>).splice(
               isStrNu.value!,
               0,
               endObj
             );
           } else {
-            (workingTemplate[iPath] as Array<any>).push(endObj);
+            ((workingTemplate as IDictionary)[iPath] as Array<any>).push(
+              endObj
+            );
           }
         } else {
           workingTemplate[iPath] = [endObj];
@@ -222,12 +224,12 @@ export class Tools {
       clone(workingTemplate)
     );
   }
-  private static _flattenObject(obj: any): any {
+  private static _flattenObject<T = unknown, TR = object>(obj: T): TR {
     // CREDITS: https://gist.github.com/penguinboy/762197
     let tempA: any = {};
     for (let i in obj) {
-      if (typeof obj[i] == "object") {
-        let tempB = this._flattenObject(obj[i]);
+      if (Tools.isObject(obj[i]) || Tools.isArray(obj[i])) {
+        let tempB = this._flattenObject<unknown, TR>(obj[i]);
         for (let j in tempB) {
           tempA[i + "." + j] = tempB[j];
         }
@@ -237,9 +239,9 @@ export class Tools {
     }
     return tempA;
   }
-  public static flattenObject(obj: any): any {
+  public static flattenObject<T = unknown, TR = object>(obj: T): TR {
     if (!this.isObject(obj)) throw "Not a valid object!";
-    return this._flattenObject(obj);
+    return this._flattenObject<T, TR>(obj);
   }
   static hierachialGetAvailibility<T>(
     listOfObjects: Array<T>,
@@ -452,71 +454,86 @@ export class Tools {
       await this.delay(time);
     }
   }
-  public static isSimpleType(value: any): boolean {
+  public static isSimpleType(value: unknown): boolean {
     return (
       Tools.isBoolean(value) || Tools.isNumber(value) || Tools.isString(value)
     );
   }
-  public static isString(value: any) {
+  public static isString(value: unknown): value is string {
     return typeof value === "string" || value instanceof String;
   }
-  public static isDate(value: any, matchString = true) {
+  public static isDate(value: unknown, matchString = true): value is Date {
     return value instanceof Date; /*
       ? true
       : matchString
         ? this.dateTimeRegex.test(`${value}`)
         : false*/
   }
-  public static isArray(value: any) {
+  public static isArray<T = unknown>(value: unknown): value is Array<T> {
     return (
-      !this.isNullOrUndefined(value) &&
-      typeof value === "object" &&
-      value.constructor === Array &&
-      !this.isNullOrUndefined(value.length)
+      !Tools.isNullOrUndefined(value) &&
+      Tools.TypeofObjectConstructor<Array<T>>(value, "array") &&
+      !Tools.isNullOrUndefined(value.length)
     );
   }
-  public static isFunction(value: any) {
+  public static isFunction(value: any): value is Function {
     return typeof value === "function";
   }
-  public static isSymbol(value: any) {
+  public static isSymbol(value: any): value is symbol {
     return typeof value === "symbol";
   }
-  public static isNumber(value: any): boolean {
+  public static isNumber(value: any): value is number {
     return typeof value === "number" && !isNaN(value);
   }
   public static isStringNumber(value: any): SimpleStatu<number> {
-    if (this.isNumber(value)) return { status: true, value: value };
+    if (Tools.isNumber(value)) return { status: true, value: value };
     try {
       const valueAsString = `${value}`;
       if (valueAsString.split(".").length > 2) return { status: false };
       if (valueAsString.split(",").length > 2) return { status: false };
       if (!/^[0-9 ,.\-]{1,}$/g.test(valueAsString)) return { status: false };
       let nValue = Number.parseFloat(valueAsString);
-      if (this.isNumber(nValue)) return { status: true, value: nValue };
+      if (Tools.isNumber(nValue)) return { status: true, value: nValue };
     } catch (EIgnore) {}
     return { status: false };
   }
-  public static isBoolean(value: any): boolean {
+  public static isBoolean(value: unknown): value is boolean {
     return typeof value === "boolean";
   }
-  public static isUndefined(value: any): boolean {
+  public static isUndefined(value: unknown): value is undefined {
     return typeof value === "undefined";
   }
-  public static isNull(value: any): boolean {
-    return value === null;
+  public static isNull(value: unknown): value is null {
+    if (value === null) return true;
+    return false;
   }
-  public static isObject(value: any): boolean {
-    if (this.isNullOrUndefined(value)) return false;
-    return value && typeof value === "object" && value.constructor === Object;
+  public static isObject(value: unknown): value is Object {
+    return Tools.TypeofObjectConstructor<Object>(value, "object");
   }
-  public static isNullOrUndefined(value: any): boolean {
-    return this.isUndefined(value) || this.isNull(value);
+  public static TypeofObjectConstructor<TR = unknown>(
+    value: unknown,
+    type: "array" | "object"
+  ): value is TR {
+    if (Tools.isNullOrUndefined(value)) return false;
+    if (type === "array")
+      return typeof value === "object" && value.constructor === Array;
+    if (type === "object")
+      return typeof value === "object" && value.constructor === Object;
+    return false;
+  }
+  public static isPlainObject(value: unknown): value is IDictionary<any> {
+    return Tools.isObject(value);
+  }
+  public static isNullOrUndefined(value: unknown): value is null | undefined {
+    if (Tools.isUndefined(value)) return true;
+    if (Tools.isNull(value)) return true;
+    return false;
   }
   static formatDate(
     time: string | Date | MOMENT.MomentInput,
     format = "DD/MM/YYYY"
   ) {
-    if (this.isNullOrUndefined(time)) return "";
+    if (Tools.isNullOrUndefined(time)) return "";
     return MOMENT(time).format(format);
   }
   static getCurrencySymbol(symbol: string) {
