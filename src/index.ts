@@ -1,4 +1,4 @@
-export { Tools } from "./Tools";
+export { Tools, CleanStringStrength } from "./Tools";
 export * as Vue from "./Vue";
 
 import { Tools } from "./Tools";

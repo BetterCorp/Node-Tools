@@ -337,6 +337,7 @@ describe("Tools", () => {
       assert.equal(flatObj["name.test"], null);
       assert.equal(flatObj["name.test2"], undefined);
       assert.equal(flatObj["age"], 123);
+      console.log(flatObj)
       assert.equal(flatObj["colors.0"], "Red");
       assert.equal(flatObj["colors.1"], "Green");
       assert.equal(flatObj["colors.2"], "Blue");
