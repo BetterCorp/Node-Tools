@@ -62,14 +62,14 @@ export class Tools {
   public static cleanString(
     objectToClean: any,
     maxLimit: number,
-    strength: CleanStringStrength,
+    strength: CleanStringStrength.custom,
     returnNullAndUndefined: true,
     customRegex: RegExp
   ): undefined | null | string;
   public static cleanString(
     objectToClean: any,
     maxLimit: number,
-    strength: CleanStringStrength,
+    strength: CleanStringStrength.custom,
     returnNullAndUndefined: false,
     customRegex: RegExp
   ): string;
