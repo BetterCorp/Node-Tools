@@ -12,6 +12,7 @@ export enum CleanStringStrength {
   exhard = "exhard",
   url = "url",
   ip = "ip",
+  custom = "custom"
 }
 export class Tools {
   public static readonly regexes = {
@@ -58,11 +59,26 @@ export class Tools {
     strength: CleanStringStrength,
     returnNullAndUndefined: false
   ): string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: CleanStringStrength,
+    returnNullAndUndefined: true,
+    customRegex: RegExp
+  ): undefined | null | string;
+  public static cleanString(
+    objectToClean: any,
+    maxLimit: number,
+    strength: CleanStringStrength,
+    returnNullAndUndefined: false,
+    customRegex: RegExp
+  ): string;
   public static cleanString<T extends boolean = false>(
     objectToClean: any,
     maxLimit: number = 255,
     strength: RegExp | CleanStringStrength = CleanStringStrength.hard,
-    returnNullAndUndefined: boolean = false
+    returnNullAndUndefined: boolean = false,
+    customRegex?: RegExp
   ): undefined | null | string {
     let regx = Tools.regexes.hard;
     if ((strength as RegExp).test !== undefined) {
@@ -81,13 +97,16 @@ export class Tools {
         case CleanStringStrength.ip:
           regx = Tools.regexes.ip;
           break;
+        case CleanStringStrength.custom:
+          regx = customRegex;
+          break;
       }
     }
     let data = `${objectToClean}`
       .trim()
       .replace(regx, "")
       .trim()
-      .substring(0, maxLimit || 255);
+      .substring(0, maxLimit ?? 255);
     if (data === "undefined")
       return returnNullAndUndefined === true ? undefined : "";
     if (data === "null") return returnNullAndUndefined === true ? null : "";
