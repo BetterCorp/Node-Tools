@@ -12,6 +12,7 @@ export enum CleanStringStrength {
   exhard = "exhard",
   url = "url",
   ip = "ip",
+  email = "email",
   custom = "custom"
 }
 export class Tools {
@@ -21,6 +22,7 @@ export class Tools {
     soft: /(?![,-:~ +_.@])[\W]/g,
     url: /(?![,-:~ +_.@\/\?=&%])[\W]/g,
     ip: /(?![.0-9:%/])[\W_]/g,
+    email: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/g
   };
 
   public static cleanString(objectToClean: any): string;
@@ -96,6 +98,9 @@ export class Tools {
           break;
         case CleanStringStrength.ip:
           regx = Tools.regexes.ip;
+          break;
+        case CleanStringStrength.email:
+          regx = Tools.regexes.email;
           break;
         case CleanStringStrength.custom:
           regx = customRegex;
