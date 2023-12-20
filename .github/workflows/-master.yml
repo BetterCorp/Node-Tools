@@ -1,17 +1,17 @@
-name: Publish Release
+name: Release Candidate
 
 on:
   push:
     branches:
-      - "release"
+      - "master"
 
 jobs:
-  release:
+  buildMaster:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -30,13 +30,17 @@ jobs:
         uses: paulhatch/semantic-version@v4.0.2
         with:
           tag_prefix: "v"
-          branch: release
+          branch: master
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          format: "${major}.${minor}.${patch}"
+          format: "${major}.${minor}.${patch}-rc"
           change_path: "./"
           bump_each_commit: true
           namespace: ""
+      - run: |
+          echo "NO CHANGES FOUND";
+          exit 1
+        if: ${{ steps.semver.outputs.changed == 'false' }}
 
       - run: rm -f ~/.npmrc ; rm -f ./.npmrc ; echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM2_TOKEN_PUB }}" > ./.npmrc
       - run: |
@@ -44,26 +48,40 @@ jobs:
           git config user.email "${{ secrets.NPM_EMAIL }}";
           echo "Hello $(git config --get user.name)";
       - run: npm run build
+      - run: npm run test
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1.5.0
+        with:
+          name: Tests
+          path: junit.json
+          reporter: mocha-json
+
       # - run: npm test
       - name: output version
         run: |
           echo "Setting version too: ${{ steps.semver.outputs.version }}";
       - run: npm version ${{ steps.semver.outputs.version }}
-      - run: npm config set sign-git-tag true
-      - run: npm publish
+      - run: npm publish --tag rc
 
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: "v${{ steps.semver.outputs.version }}"
-          name: "v${{ steps.semver.outputs.version }}"
-          body: "See release: https://www.npmjs.com/package/@bettercorp/tools/v/${{ steps.semver.outputs.version }}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Push tag
+      #  id: tag_version
+      #  uses: mathieudutour/github-tag-action@v6.0
+      #  with:
+      #    custom_tag: ${{ steps.semver.outputs.version }}
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      #- uses: ncipollo/release-action@v1
+      #  with:
+      #    tag: "v${{ steps.semver.outputs.version }}"
+      #    name: "v${{ steps.semver.outputs.version }}"
+      #    body: "See release: https://www.npmjs.com/package/@bettercorp/tools/v/${{ steps.semver.outputs.version }}"
+      #    token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: cleanup
         if: always()
         run: rm -f ~/.npmrc ; rm -f ./.npmrc;
 
-  releaseDocs:
+  buildDocsMaster:
     runs-on: ubuntu-latest
 
     strategy:
@@ -92,4 +110,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages publish documentation/.vuepress/dist --project-name=better-tools  --branch=master
+          command: pages publish documentation/.vuepress/dist --project-name=better-tools  --branch=rc

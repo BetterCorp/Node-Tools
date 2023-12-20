@@ -1,6 +1,6 @@
-/lib
+lib
 node_modules
-/junit.xml
-/junit.json
-/.nyc_output
-/coverage
+junit.xml
+junit.json
+.nyc_output
+coverage

@@ -7,8 +7,8 @@ on:
   push:
     branches:
       - "**"
-      - "!master"
-      - "!develop"
+      #- "!master"
+      #- "!develop"
       - "!release"
     tags-ignore:
       - "**"
@@ -19,50 +19,57 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
+          cache-dependency-path: lite/package-lock.json
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          registry-url: 'https://registry.npmjs.org'
+
       - run: npm ci
+        working-directory: lite/
       - run: npm run build
+        working-directory: lite/
+
+      - run: npm ci
+        working-directory: heavy/
+      - run: npm run build
+        working-directory: heavy/
+
+      - run: npm ci
+        working-directory: node/
+      - run: npm run build
+        working-directory: node/
+
       - run: npm run test
-
-      - name: Test Report
-        uses: dorny/test-reporter@v1.5.0
-        with:
-          name: Tests
-          path: junit.json
-          reporter: mocha-json
-
-      - name: Coverage Report
-        uses: Tintef/nyc-reporter-action@0.2.5
-        with:
-          REPORTER: "json"
-
+        working-directory: lite/
+  
   buildDocs:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
+          cache-dependency-path: documentation/package-lock.json
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          registry-url: 'https://registry.npmjs.org'
+
       - run: npm ci
         working-directory: documentation/
 

@@ -9,6 +9,12 @@ Over time you re-use functions over and over, so why not just lump them cleanly 
 npm i --save @bettercorp/tools
 ```
 
+### Versions  
+`@latest` - lite/default small Tools  
+`@heavy` - contains MomentJS and other deps  
+`@node` - NodeJS varient with file based tools  
+`@web` - Web based tools - See source for copy/paste of code  
+
 ### Import the library  
 ```typescript
 import { Tools } from '@bettercorp/tools';

@@ -1,0 +1,27 @@
+{
+  "name": "@bettercorp/tools",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "npm publish",
+    "test": "node ./node_modules/nyc/bin/nyc.js --reporter json ./node_modules/mocha/bin/mocha.js --reporter json --reporter-options output=junit.json",
+    "testDev": "node ./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha.js"
+  },
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "url": "https://github.com/BetterCorp/Node-Tools"
+  },
+  "homepage": "https://tools.bsbcode.dev/",
+  "files": [
+    "lib/**/*"
+  ],
+  "main": "lib/web/src/index.js",
+  "version": "2.2.0",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.9.2",
+    "tslint": "^6.1.3",
+    "typescript": "^5.3.3"
+  }
+}

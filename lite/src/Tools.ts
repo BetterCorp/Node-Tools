@@ -1,9 +1,6 @@
-import * as MOMENT from "moment";
 import { IDictionary, MergeObjectsKey, SimpleStatu } from "./Interfaces";
 import * as CryptoAES from "crypto-js/aes";
 import * as CryptoENC from "crypto-js/enc-utf8";
-import { readdir, stat } from "fs";
-import path = require("path");
 const clone = require("just-clone");
 
 export enum CleanStringStrength {
@@ -103,6 +100,7 @@ export class Tools {
           regx = Tools.regexes.email;
           break;
         case CleanStringStrength.custom:
+          if (Tools.isUndefined(customRegex)) throw "No custom regex provided!";
           regx = customRegex;
           break;
       }
@@ -116,35 +114,6 @@ export class Tools {
       return returnNullAndUndefined === true ? undefined : "";
     if (data === "null") return returnNullAndUndefined === true ? null : "";
     return data;
-  }
-
-  public walkFilePath(
-    dir: string,
-    returnFullPath: boolean = false
-  ): Promise<Array<string>> {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      let results: Array<any> = [];
-      readdir(dir, (err, list) => {
-        if (err) return reject(err);
-        var pending = list.length;
-        if (!pending) return resolve(results);
-        list.forEach((file) => {
-          if (returnFullPath) file = path.resolve(dir, file);
-          stat(path.resolve(dir, file), (err, stat) => {
-            if (stat && stat.isDirectory()) {
-              self.walkFilePath(file).then((res) => {
-                results = results.concat(res);
-                if (!--pending) resolve(results);
-              });
-            } else {
-              results.push(file);
-              if (!--pending) resolve(results);
-            }
-          });
-        });
-      });
-    });
   }
 
   public static autoCapitalizeWords(data: string): string {
@@ -164,13 +133,6 @@ export class Tools {
   }
   static decrypt(text: string, key: string) {
     return CryptoAES.decrypt(text, key).toString(CryptoENC);
-  }
-  static inIframe(): boolean {
-    try {
-      return window.self !== window.top;
-    } catch (e) {
-      return true;
-    }
   }
   private static _setUpdatedTemplatePathFinderArrayHandler(
     index: number,
@@ -552,13 +514,6 @@ export class Tools {
     if (Tools.isUndefined(value)) return true;
     if (Tools.isNull(value)) return true;
     return false;
-  }
-  static formatDate(
-    time: string | Date | MOMENT.MomentInput,
-    format = "DD/MM/YYYY"
-  ) {
-    if (Tools.isNullOrUndefined(time)) return "";
-    return MOMENT(time).format(format);
   }
   static getCurrencySymbol(symbol: string) {
     switch (symbol.toUpperCase()) {

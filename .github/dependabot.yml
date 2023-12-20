@@ -1,7 +1,25 @@
 version: 2
 updates:
 - package-ecosystem: npm
-  directory: "/"
+  directory: "/heavy"
+  schedule:
+    interval: monthly
+    time: "03:00"
+  open-pull-requests-limit: 10
+- package-ecosystem: npm
+  directory: "/lite"
+  schedule:
+    interval: monthly
+    time: "03:00"
+  open-pull-requests-limit: 10
+- package-ecosystem: npm
+  directory: "/node"
+  schedule:
+    interval: monthly
+    time: "03:00"
+  open-pull-requests-limit: 10
+- package-ecosystem: npm
+  directory: "/web"
   schedule:
     interval: monthly
     time: "03:00"
