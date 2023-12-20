@@ -17,7 +17,6 @@
   "main": "lib/index.js",
   "version": "2.2.0",
   "devDependencies": {
-    "@types/crypto-js": "^4.2.1",
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
@@ -26,7 +25,6 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0",
     "just-clone": "^6.2.0"
   }
 }

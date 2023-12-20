@@ -1,6 +1,4 @@
 import { IDictionary, MergeObjectsKey, SimpleStatu } from "./Interfaces";
-import * as CryptoAES from "crypto-js/aes";
-import * as CryptoENC from "crypto-js/enc-utf8";
 const clone = require("just-clone");
 
 export enum CleanStringStrength {
@@ -127,12 +125,6 @@ export class Tools {
   }
   static enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
     return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
-  }
-  static encrypt(text: string, key: string) {
-    return CryptoAES.encrypt(text, key).toString();
-  }
-  static decrypt(text: string, key: string) {
-    return CryptoAES.decrypt(text, key).toString(CryptoENC);
   }
   private static _setUpdatedTemplatePathFinderArrayHandler(
     index: number,
