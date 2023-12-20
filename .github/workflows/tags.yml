@@ -45,23 +45,28 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          version_format: "${major}.${minor}"
+          version_format: "${major}.${minor}.${patch}"
           change_path: "./"
           bump_each_commit: true
 
-      - run: npm version ${{ steps.semver.outputs.version }}.0 --no-git-tag-version
+      - id: versioni
+        run: |
+          echo "Setting version as v${{ steps.semver.outputs.major }}.${{ steps.semver.outputs.minor }}.X"
+          echo "version=${{ steps.semver.outputs.major }}.${{ steps.semver.outputs.minor }}" >> "$GITHUB_OUTPUT"
+          
+      - run: npm version ${{ steps.versioni.outputs.version }}.0 --no-git-tag-version
         working-directory: lite/
 
       - run: npm run build
         working-directory: lite/
 
-      - run: npm version ${{ steps.semver.outputs.version }}.1 --no-git-tag-version
+      - run: npm version ${{ steps.versioni.outputs.version }}.1 --no-git-tag-version
         working-directory: heavy/
 
       - run: npm run build
         working-directory: heavy/
 
-      - run: npm version ${{ steps.semver.outputs.version }}.2 --no-git-tag-version
+      - run: npm version ${{ steps.versioni.outputs.version }}.2 --no-git-tag-version
         working-directory: node/
 
       - run: npm run build
@@ -100,9 +105,9 @@ jobs:
 
       - uses: ncipollo/release-action@v1
         with:
-          tag: "v${{ steps.semver.outputs.version }}"
-          name: "v${{ steps.semver.outputs.version }}"
-          body: "See release: https://www.npmjs.com/package/@bettercorp/tools/v/${{ steps.semver.outputs.version }}"
+          tag: "v${{ steps.versioni.outputs.version }}.0"
+          name: "v${{ steps.versioni.outputs.version }}"
+          body: "See release: https://www.npmjs.com/package/@bettercorp/tools/v/${{ steps.versioni.outputs.version }}.0"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   releaseDocs:
