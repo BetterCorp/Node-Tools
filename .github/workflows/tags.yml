@@ -91,17 +91,17 @@ jobs:
       - run: npm publish
         working-directory: lite/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_TOKEN_PUB }}
 
       - run: npm publish --tag heavy
         working-directory: heavy/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_TOKEN_PUB }}
 
       - run: npm publish --tag node
         working-directory: node/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_TOKEN_PUB }}
 
       - uses: ncipollo/release-action@v1
         with:
