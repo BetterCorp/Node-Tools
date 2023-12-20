@@ -43,7 +43,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(MAJOR)"
           minor_pattern: "(MINOR)"
-          version_format: "${major}.${patch}"
+          version_format: "${major}.${minor}"
           change_path: "./"
           bump_each_commit: true
 
@@ -84,17 +84,17 @@ jobs:
       - run: npm publish
         working-directory: lite/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
 
       - run: npm publish --tag heavy
         working-directory: heavy/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
 
       - run: npm publish --tag node
         working-directory: node/
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM2_PUBLISH_TOKEN }}
 
       - uses: ncipollo/release-action@v1
         with:
@@ -119,8 +119,10 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
+          cache-dependency-path: documentation/package-lock.json
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
       - run: npm ci
         working-directory: documentation/
 
