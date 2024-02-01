@@ -17,7 +17,7 @@
   "main": "lib/node/src/index.js",
   "version": "2.2.0",
   "devDependencies": {
-    "@types/crypto-js": "^4.2.1",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.10.5",
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
